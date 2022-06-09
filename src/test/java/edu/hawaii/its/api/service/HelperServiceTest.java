@@ -1,5 +1,6 @@
 package edu.hawaii.its.api.service;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import edu.hawaii.its.api.configuration.SpringBootWebApplication;
 import edu.hawaii.its.api.type.Group;
@@ -21,9 +22,13 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -252,6 +257,46 @@ public class HelperServiceTest {
         assertEquals(identifier, person.getUsername());
 
         assertNotNull(helperService.makePerson(new WsSubject(), new String[] {}));
+    }
+
+    @Test
+    public void setTheWhereListedTest() {
+        Group basisGrouping = new Group();
+        Group includeGrouping = new Group();
+        Group excludeGrouping = new Group();
+        Group compositeGrouping = new Group();
+        Group ownersGrouping = new Group();
+
+        for (int i = 0; i < 10; i++) {
+            basisGrouping.addMember(new Person("iamtst"+i, "iamtst"+i, "iamtst"+i, "iamtst"+i, "iamtst"+i, "Basis"));
+            includeGrouping.addMember(new Person("iamtst0"+i, "iamtst0"+i, "iamtst0"+i, "iamtst0"+i, "iamtst0"+i, "Basis"));
+            ownersGrouping.addMember(new Person("iamtst1"+i, "iamtst1"+i, "iamtst1"+i, "iamtst1"+i, "iamtst1"+i, "Basis"));
+            excludeGrouping.addMember(new Person("iamtst2"+i, "iamtst2"+i, "iamtst2"+i, "iamtst2"+i, "iamtst2"+i, "Basis"));
+        }
+
+        Set<Person> set = new LinkedHashSet<>(includeGrouping.getMembers());
+        set.addAll(basisGrouping.getMembers());
+        for (Person person : set) {
+            compositeGrouping.addMember(person);
+        }
+
+        helperService.setTheWhereListed(basisGrouping, includeGrouping, excludeGrouping, compositeGrouping, ownersGrouping);
+
+        for (Person basisPerson : basisGrouping.getMembers()) {
+            assertEquals(basisPerson.getWhereListed(), "Basis");
+        }
+
+        for (Person compositePerson : compositeGrouping.getMembers()) {
+            MatcherAssert.assertThat(compositePerson.getWhereListed(), anyOf(is("Basis & Include"), is("Basis"), is("Include")));
+        }
+
+        for (Person includePerson : includeGrouping.getMembers()) {
+            assertEquals(includePerson.getWhereListed(), "Include");
+        }
+
+        for (Person excludePerson : excludeGrouping.getMembers()) {
+            assertEquals(excludePerson.getWhereListed(), "Exclude");
+        }
     }
 
     @Test
