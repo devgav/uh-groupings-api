@@ -235,34 +235,8 @@ public class HelperServiceImpl implements HelperService {
             }
             // uhUuid is the only attribute not actually in the WsSubject attribute array.
             attributes.put(UHUUID, subject.getId());
-
+            
             return new Person(attributes);
-        }
-    }
-
-    @Override
-    public void setTheWhereListed(Group basis, Group include, Group exclude, Group composite, Group owners) {
-        List<Person> personsInBasis = basis.getMembers();
-        List<Person> personsInInclude = include.getMembers();
-        List<Person> personsInExclude = exclude.getMembers();
-        List<Person> composites = composite.getMembers();
-        List<Person> basisAndIncludes = personsInBasis.stream().filter(personsInInclude::contains).collect(Collectors.toList());
-
-        for (Person compositePerson : composites) {
-            for (Person person : personsInInclude) {
-                if (compositePerson.equals(person)) {
-                    compositePerson.setWhereListed("Include");
-                }
-                person.setWhereListed("Include");
-            }
-            for (Person person : basisAndIncludes) {
-                if (compositePerson.equals(person)) {
-                    compositePerson.setWhereListed("Basis & Include");
-                }
-            }
-            for (Person excludeMember : personsInExclude) {
-                excludeMember.setWhereListed("Exclude");
-            }
         }
     }
     

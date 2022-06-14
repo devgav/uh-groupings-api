@@ -8,7 +8,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Person implements Comparable<Person> {
 
+<<<<<<< HEAD
     private static String COMPOSITE_NAME = "cn";
+=======
+    @Transient
+    private static String COMMON_NAME = "cn";
+    @Transient
+>>>>>>> f6f8876a (Implement assignMemberToGroup fnc)
     private static String FIRST_NAME = "givenName";
     private static String LAST_NAME = "sn";
     private static String UHUUID = "uhUuid";
@@ -26,7 +32,7 @@ public class Person implements Comparable<Person> {
     // Constructor.
     public Person(String name) {
         this();
-        attributes.put(COMPOSITE_NAME, name);
+        attributes.put(COMMON_NAME, name);
     }
 
     // Constructor.
@@ -64,7 +70,12 @@ public class Person implements Comparable<Person> {
     public Person(Map<String, String> attributes) {
         this.attributes = attributes;
     }
+<<<<<<< HEAD
 
+=======
+    @Id
+    @Column
+>>>>>>> f6f8876a (Implement assignMemberToGroup fnc)
     public String getUsername() {
         return attributes.get(USERNAME);
     }
@@ -74,11 +85,11 @@ public class Person implements Comparable<Person> {
     }
 
     public String getName() {
-        return attributes.get(COMPOSITE_NAME);
+        return attributes.get(COMMON_NAME);
     }
 
     public void setName(String name) {
-        attributes.put(COMPOSITE_NAME, name);
+        attributes.put(COMMON_NAME, name);
     }
 
     public String getUhUuid() {
@@ -193,11 +204,6 @@ public class Person implements Comparable<Person> {
         int uhUuidComp = nullSafeComparator.compare(getUhUuid(), person.getUhUuid());
         if (uhUuidComp != 0) {
             return uhUuidComp;
-        }
-
-        int whereListedComp = nullSafeComparator.compare(getWhereListed(), person.getWhereListed());
-        if (whereListedComp != 0) {
-            return whereListedComp;
         }
 
         return 0;

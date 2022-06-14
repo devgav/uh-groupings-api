@@ -20,8 +20,10 @@ public interface GroupingAssignmentService {
             String sortString,
             Boolean isAscending);
 
-    Grouping setGroupingAttributes(Grouping grouping);
+    void assignMemberToGroup(Grouping compositeGrouping);
 
+    Grouping setGroupingAttributes(Grouping grouping);
+    
     Map<String, Group> getPaginatedMembers(String ownerUsername, List<String> groupPaths, Integer page, Integer size,
             String sortString, Boolean isAscending);
 

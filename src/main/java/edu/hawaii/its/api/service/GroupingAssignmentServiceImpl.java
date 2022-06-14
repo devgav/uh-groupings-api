@@ -83,8 +83,11 @@ public class GroupingAssignmentServiceImpl implements GroupingAssignmentService 
     @Autowired
     private MemberAttributeService memberAttributeService;
 
+    public MemberAttributeService getMemberAttributeService() { 
+        return memberAttributeService;
+    }
     @Autowired GroupAttributeService groupAttributeService;
-
+    
     /**
      * Fetch a grouping from Grouper or the database.
      */
@@ -127,11 +130,11 @@ public class GroupingAssignmentServiceImpl implements GroupingAssignmentService 
         }
         compositeGrouping.setComposite(testGroup);
         compositeGrouping.setOwners(groups.get(owners));
-        helperService.setTheWhereListed(compositeGrouping.getBasis(), compositeGrouping.getInclude(), compositeGrouping.getExclude(), compositeGrouping.getComposite(), compositeGrouping.getOwners());
+        assignMemberToGroup(compositeGrouping);
 
         return compositeGrouping;
     }
-
+    
     /**
      * Fetch a grouping from Grouper Database, but paginated based on given page + size sortString sorts the database
      * by whichever sortString category is given (e.g. "uid" will sort list by uid) before returning page
@@ -143,7 +146,7 @@ public class GroupingAssignmentServiceImpl implements GroupingAssignmentService 
         logger.info(
                 "getPaginatedGrouping; grouping: " + groupingPath + "; username: " + ownerUsername + "; page: " + page
                         + "; size: " + size + "; sortString: " + sortString + "; isAscending: " + isAscending + ";");
-        if (!memberAttributeService.isOwner(groupingPath, ownerUsername) && !memberAttributeService.isAdmin(
+        if (!getMemberAttributeService().isOwner(groupingPath, ownerUsername) && !memberAttributeService.isAdmin(
                 ownerUsername)) {
             throw new AccessDeniedException(INSUFFICIENT_PRIVILEGES);
         }
@@ -174,10 +177,52 @@ public class GroupingAssignmentServiceImpl implements GroupingAssignmentService 
             testGroup.addMember(person);
         }
         compositeGrouping.setComposite(testGroup);
+        compositeGrouping.setComposite(groups.get(groupingPath));
         compositeGrouping.setOwners(groups.get(owners));
-        helperService.setTheWhereListed(compositeGrouping.getBasis(), compositeGrouping.getInclude(), compositeGrouping.getExclude(), compositeGrouping.getComposite(), compositeGrouping.getOwners());
-
+        assignMemberToGroup(compositeGrouping);
         return compositeGrouping;
+    }
+
+    public List<Person> getCommonElements(List<Person> basis, List<Person> include) {
+        Set hashSet = new HashSet(basis);
+        List<Person> returnArr = new ArrayList<>();
+        for (Person person : include) {
+            if (hashSet.contains(person)) {
+                returnArr.add(person);
+            }
+        }
+        return returnArr;
+    }
+    public void assignMemberToGroup(Grouping compositeGrouping) {
+            List<Person> personsInBasis = compositeGrouping.getBasis().getMembers();
+            List<Person> personsInInclude = compositeGrouping.getInclude().getMembers();
+            List<Person> composites = compositeGrouping.getComposite().getMembers();
+            List<Person> basisAndIncludes = getCommonElements(personsInBasis, personsInInclude);
+
+            for (Person person : composites) {
+                for (Person basisPerson : personsInBasis) {
+                    if (person.equals(basisPerson)) {
+                        person.setWhereListed("Basis");
+                    }
+                }
+                for (Person basisPerson : personsInInclude) {
+                    if (person.equals(basisPerson)) {
+                        person.setWhereListed("Include");
+                    }
+                }
+                for (Person both : basisAndIncludes) {
+                    if (person.equals(both)) {
+                        person.setWhereListed("Basis & Include");
+                    }
+                    if (both.getName().equals("Gavin Peng")) {
+                        System.err.println("blank");
+                    }
+                    if (person.getName().equals("Gavin Peng")) {
+                        System.err.println("blank2");
+                    }
+                }
+            }
+
     }
 
     //returns an adminLists object containing the list of all admins and all groupings

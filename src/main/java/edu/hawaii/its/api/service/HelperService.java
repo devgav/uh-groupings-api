@@ -26,9 +26,7 @@ public interface HelperService {
             Person person);
 
     GroupingsServiceResult makeGroupingsServiceResult(String resultCode, String action);
-
-    void setTheWhereListed(Group basis, Group include, Group exclude, Group composite, Group owner);
-
+    
     List<GroupingPath> makePaths(List<String> groupingPaths);
 
     String parentGroupingPath(String group);
