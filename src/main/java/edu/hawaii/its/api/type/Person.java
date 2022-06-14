@@ -13,6 +13,8 @@ public class Person implements Comparable<Person> {
     private static String LAST_NAME = "sn";
     private static String UHUUID = "uhUuid";
     private static String USERNAME = "uid";
+    @Transient
+    private static String WHERE_LISTED = "listed";
 
     private Map<String, String> attributes = new HashMap<>();
 
@@ -47,6 +49,15 @@ public class Person implements Comparable<Person> {
 
         attributes.put(FIRST_NAME, firstName);
         attributes.put(LAST_NAME, lastName);
+    }
+
+    // Constructor.
+    public Person(String name, String uhUuid, String username, String firstName, String lastName, String whereListed) {
+        this(name, uhUuid, username);
+
+        attributes.put(FIRST_NAME, firstName);
+        attributes.put(LAST_NAME, lastName);
+        attributes.put(WHERE_LISTED, whereListed);
     }
 
     // Constructor.
@@ -92,6 +103,16 @@ public class Person implements Comparable<Person> {
 
     public void setLastName(String lastName) {
         attributes.put(LAST_NAME, lastName);
+    }
+
+    @Column(name = "WhereListed")
+
+    public String getWhereListed() {
+        return attributes.get(WHERE_LISTED);
+    }
+
+    public void setWhereListed(String whereListed) {
+        attributes.put(WHERE_LISTED, whereListed);
     }
 
     @JsonIgnore
@@ -172,6 +193,11 @@ public class Person implements Comparable<Person> {
         int uhUuidComp = nullSafeComparator.compare(getUhUuid(), person.getUhUuid());
         if (uhUuidComp != 0) {
             return uhUuidComp;
+        }
+
+        int whereListedComp = nullSafeComparator.compare(getWhereListed(), person.getWhereListed());
+        if (whereListedComp != 0) {
+            return whereListedComp;
         }
 
         return 0;
