@@ -4,6 +4,7 @@ import edu.hawaii.its.api.type.AdminListsHolder;
 import edu.hawaii.its.api.type.Group;
 import edu.hawaii.its.api.type.Grouping;
 import edu.hawaii.its.api.type.GroupingPath;
+import edu.hawaii.its.api.type.Person;
 
 import java.util.List;
 import java.util.Map;
@@ -26,9 +27,24 @@ public interface GroupingAssignmentService {
     
     Map<String, Group> getPaginatedMembers(String ownerUsername, List<String> groupPaths, Integer page, Integer size,
             String sortString, Boolean isAscending);
+    
+    List<Person> retrieveOwners(String groupingPath, String ownerUsername, Integer page, Integer size,
+            String sortString, Boolean isAscending);
+
+    List<Person> retrieveComposite(String groupingPath, String ownerUsername, Integer page, Integer size,
+            String sortString, Boolean isAscending);
+
+    List<Person> retrieveBasis(String groupingPath, String ownerUsername, Integer page, Integer size,
+            String sortString, Boolean isAscending);
+
+    List<Person> retrieveInclude(String groupingPath, String ownerUsername, Integer page, Integer size,
+            String sortString, Boolean isAscending);
+
+    List<Person> retrieveExclude(String groupingPath, String ownerUsername, Integer page, Integer size,
+            String sortString, Boolean isAscending);
 
     List<String> getGroupPaths(String ownerUsername, String username);
-
+    
     List<String> optOutGroupingsPaths(String owner, String optOutUid);
 
     List<GroupingPath> optInGroupingPaths(String owner, String optInUid);

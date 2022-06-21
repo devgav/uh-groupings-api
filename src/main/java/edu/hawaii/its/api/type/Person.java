@@ -21,6 +21,8 @@ public class Person implements Comparable<Person> {
     private static String USERNAME = "uid";
     @Transient
     private static String WHERE_LISTED = "listed";
+    @Transient
+    private static String IN_BASIS = "inBasis";
 
     private Map<String, String> attributes = new HashMap<>();
 
@@ -124,6 +126,14 @@ public class Person implements Comparable<Person> {
 
     public void setWhereListed(String whereListed) {
         attributes.put(WHERE_LISTED, whereListed);
+    }
+
+    @Column(name = "InBasis")
+    public String getIsBasis() {
+        return attributes.get(IN_BASIS);
+    }
+    public void setIsBasis(String inBasis) {
+        attributes.put(IN_BASIS, inBasis);
     }
 
     @JsonIgnore
