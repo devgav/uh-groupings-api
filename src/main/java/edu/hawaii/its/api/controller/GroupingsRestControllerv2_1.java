@@ -208,6 +208,22 @@ public class GroupingsRestControllerv2_1 {
                         .retrieveComposite(path, currentUser, page, size, sortString, isAscending));
     }
 
+
+    @GetMapping(value = "/groupings/getListOfMembers/{path:[\\w-:.]+}")
+    @ResponseBody
+    public ResponseEntity<List<Person>> getListOfMembers(@RequestHeader(CURRENT_USER) String currentUser,
+            @PathVariable String path,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) String sortString,
+            @RequestParam(required = false) Boolean isAscending) {
+        logger.info("Entered REST getGrouping...");
+        return ResponseEntity
+                .ok()
+                .body(groupingAssignmentService
+                        .getListOfMembers(path, currentUser, page, size, sortString, isAscending));
+    }
+
     @GetMapping(value = "/groupings/retrieveBasis/{path:[\\w-:.]+}")
     @ResponseBody
     public ResponseEntity<List<Person>> retrieveBasis(@RequestHeader(CURRENT_USER) String currentUser,
