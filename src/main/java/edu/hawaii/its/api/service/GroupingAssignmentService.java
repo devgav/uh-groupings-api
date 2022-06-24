@@ -30,21 +30,6 @@ public interface GroupingAssignmentService {
     
     List<Person> getListOfMembers(String groupingPath, String ownerUsername, Integer page, Integer size, String sortString, Boolean isAscending);
 
-    List<Person> retrieveOwners(String groupingPath, String ownerUsername, Integer page, Integer size,
-            String sortString, Boolean isAscending);
-
-    List<Person> retrieveComposite(String groupingPath, String ownerUsername, Integer page, Integer size,
-            String sortString, Boolean isAscending);
-
-    List<Person> retrieveBasis(String groupingPath, String ownerUsername, Integer page, Integer size,
-            String sortString, Boolean isAscending);
-
-    List<Person> retrieveInclude(String groupingPath, String ownerUsername, Integer page, Integer size,
-            String sortString, Boolean isAscending);
-
-    List<Person> retrieveExclude(String groupingPath, String ownerUsername, Integer page, Integer size,
-            String sortString, Boolean isAscending);
-
     List<String> getGroupPaths(String ownerUsername, String username);
     
     List<String> optOutGroupingsPaths(String owner, String optOutUid);

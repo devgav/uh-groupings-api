@@ -178,37 +178,6 @@ public class GroupingsRestControllerv2_1 {
                         .getPaginatedGrouping(path, currentUser, page, size, sortString, isAscending));
     }
 
-    @GetMapping(value = "/groupings/retrieveOwners/{path:[\\w-:.]+}")
-    @ResponseBody
-    public ResponseEntity<List<Person>> retrieveOwners(@RequestHeader(CURRENT_USER) String currentUser,
-            @PathVariable String path,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size,
-            @RequestParam(required = false) String sortString,
-            @RequestParam(required = false) Boolean isAscending) {
-        logger.info("Entered REST getGrouping...");
-        return ResponseEntity
-                .ok()
-                .body(groupingAssignmentService
-                        .retrieveOwners(path, currentUser, page, size, sortString, isAscending));
-    }
-
-    @GetMapping(value = "/groupings/retrieveComposite/{path:[\\w-:.]+}")
-    @ResponseBody
-    public ResponseEntity<List<Person>> retrieveComposite(@RequestHeader(CURRENT_USER) String currentUser,
-            @PathVariable String path,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size,
-            @RequestParam(required = false) String sortString,
-            @RequestParam(required = false) Boolean isAscending) {
-        logger.info("Entered REST getGrouping...");
-        return ResponseEntity
-                .ok()
-                .body(groupingAssignmentService
-                        .retrieveComposite(path, currentUser, page, size, sortString, isAscending));
-    }
-
-
     @GetMapping(value = "/groupings/getListOfMembers/{path:[\\w-:.]+}")
     @ResponseBody
     public ResponseEntity<List<Person>> getListOfMembers(@RequestHeader(CURRENT_USER) String currentUser,
@@ -222,51 +191,6 @@ public class GroupingsRestControllerv2_1 {
                 .ok()
                 .body(groupingAssignmentService
                         .getListOfMembers(path, currentUser, page, size, sortString, isAscending));
-    }
-
-    @GetMapping(value = "/groupings/retrieveBasis/{path:[\\w-:.]+}")
-    @ResponseBody
-    public ResponseEntity<List<Person>> retrieveBasis(@RequestHeader(CURRENT_USER) String currentUser,
-            @PathVariable String path,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size,
-            @RequestParam(required = false) String sortString,
-            @RequestParam(required = false) Boolean isAscending) {
-        logger.info("Entered REST getGrouping...");
-        return ResponseEntity
-                .ok()
-                .body(groupingAssignmentService
-                        .retrieveBasis(path, currentUser, page, size, sortString, isAscending));
-    }
-
-    @GetMapping(value = "/groupings/retrieveInclude/{path:[\\w-:.]+}")
-    @ResponseBody
-    public ResponseEntity<List<Person>> retrieveInclude(@RequestHeader(CURRENT_USER) String currentUser,
-            @PathVariable String path,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size,
-            @RequestParam(required = false) String sortString,
-            @RequestParam(required = false) Boolean isAscending) {
-        logger.info("Entered REST getGrouping...");
-        return ResponseEntity
-                .ok()
-                .body(groupingAssignmentService
-                        .retrieveInclude(path, currentUser, page, size, sortString, isAscending));
-    }
-
-    @GetMapping(value = "/groupings/retrieveExclude/{path:[\\w-:.]+}")
-    @ResponseBody
-    public ResponseEntity<List<Person>> retrieveExclude(@RequestHeader(CURRENT_USER) String currentUser,
-            @PathVariable String path,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size,
-            @RequestParam(required = false) String sortString,
-            @RequestParam(required = false) Boolean isAscending) {
-        logger.info("Entered REST getGrouping...");
-        return ResponseEntity
-                .ok()
-                .body(groupingAssignmentService
-                        .retrieveExclude(path, currentUser, page, size, sortString, isAscending));
     }
 
     /**

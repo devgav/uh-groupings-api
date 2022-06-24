@@ -185,7 +185,7 @@ public class GroupingAssignmentServiceImpl implements GroupingAssignmentService 
         assignIsBasis(compositeGrouping);
         return compositeGrouping;
     }
-    
+
     //Create one function to retrieve what we need when a group is based in
     @Override
     public List<Person> getListOfMembers(String groupingPath, String ownerUsername, Integer page, Integer size,
@@ -208,94 +208,68 @@ public class GroupingAssignmentServiceImpl implements GroupingAssignmentService 
                 ownerUsername)) {
             throw new AccessDeniedException(INSUFFICIENT_PRIVILEGES);
         }
-        Grouping compositeGrouping = new Grouping(groupingPath);
         Group theGroup = new Group();
-        String basis = groupingPath + BASIS;
-        String include = groupingPath + INCLUDE;
-        String exclude = groupingPath + EXCLUDE;
-        String owners = groupingPath + OWNERS;
-        Map<String, Group> members = getPaginatedMembers(ownerUsername, Collections.singletonList(groupingPath), page, size, sortString, isAscending);
-
-        switch (groupingPath) {
-            case owners:
-            case basis:
-                theGroup = members.get(groupingPath);
+        String basis = endOfGroupingPath + BASIS;
+        String include = endOfGroupingPath + INCLUDE;
+        String exclude = endOfGroupingPath + EXCLUDE;
+        Map<String, Group> members;
+        Grouping compositeGrouping = new Grouping();
+        List<String> groupings = new ArrayList<>();
+        switch (itsTheEnd) {
+            case "owners":
+            case "basis":
+                members = getPaginatedMembers(ownerUsername, Collections.singletonList(groupingPath), page, size,
+                        sortString, isAscending);
+                if (members.get(groupingPath) != null) {
+                    theGroup = members.get(groupingPath);
+                }
                 break;
-            case include: 
-                Grouping def = new Grouping();
-                List<String> groupings = new ArrayList<>();
-                groupings.add(groupingPath);
+            case "include":
                 groupings.add(basis);
-                Map<String, Group> newMembers = getPaginatedMembers(ownerUsername, groupings, page, size, sortString, isAscending);
-                Group includeGroup = newMembers.get(groupingPath);
-                Group basisGroup = newMembers.get(basis);
-                def.setInclude(includeGroup);
-                def.setBasis(basisGroup);
-                assignIsBasis(def);
-                theGroup = includeGroup;
+                groupings.add(include);
+                members = getPaginatedMembers(ownerUsername, groupings, page, size,
+                        sortString, isAscending);
+                compositeGrouping.setBasis(members.get(basis));
+                compositeGrouping.setInclude(members.get(include));
+                assignIsBasis(compositeGrouping);
+                theGroup = compositeGrouping.getInclude();
                 break;
-            case exclude:
-                Grouping aGrouping = new Grouping();
-                List<String> aGroupingPath = new ArrayList<>();
-                aGroupingPath.add(groupingPath);
-                aGroupingPath.add(basis);
-                Map<String, Group> newMembe = getPaginatedMembers(ownerUsername, aGroupingPath, page, size, sortString, isAscending);
-                Group regularGroup = newMembe.get(groupingPath);
-                Group excludeGroup = newMembe.get(basis);
-                aGrouping.setInclude(regularGroup);
-                aGrouping.setBasis(excludeGroup);
-                assignIsBasis(aGrouping);
-                theGroup = excludeGroup;
-            default: 
-                
+            case "exclude":
+                groupings.add(basis);
+                groupings.add(exclude);
+                members = getPaginatedMembers(ownerUsername, groupings, page, size,
+                        sortString, isAscending);
+                compositeGrouping.setBasis(members.get(basis));
+                compositeGrouping.setExclude(members.get(exclude));
+                assignIsBasis(compositeGrouping);
+                theGroup = compositeGrouping.getExclude();
+                break;
+            default:
+                groupings.add(basis);
+                groupings.add(include);
+                members = getPaginatedMembers(ownerUsername, groupings, page, size,
+                        sortString, isAscending);
+                Group testGroup = new Group();
+                Set<Person> set = new LinkedHashSet<>();
+                if (members.get(include) != null) {
+                    set.addAll(members.get(include).getMembers());
+                    if (members.get(basis) != null) {
+                        set.addAll(members.get(basis).getMembers());
+                    }
+                }
+                for (Person person : set) {
+                    testGroup.addMember(person);
+                }
+                compositeGrouping.setBasis(members.get(basis));
+                compositeGrouping.setInclude(members.get(include));
+                compositeGrouping.setComposite(testGroup);
+                assignMemberToGroup(compositeGrouping);
+                theGroup = compositeGrouping.getComposite();
+                break;
         }
-        
-        assignMemberToGroup(compositeGrouping);
-        assignIsBasis(compositeGrouping);
         return theGroup.getMembers();
     }
-    
-    @Override
-    public List<Person> retrieveOwners(String groupingPath, String ownerUsername, Integer page, Integer size,
-            String sortString, Boolean isAscending) {
-        logger.info(
-                "getPaginatedGrouping; grouping: " + groupingPath + "; username: " + ownerUsername + "; page: " + page
-                        + "; size: " + size + "; sortString: " + sortString + "; isAscending: " + isAscending + ";");
-        return getPaginatedGrouping(groupingPath, ownerUsername, page, size, sortString, isAscending).getOwners().getMembers();
-    }
-    @Override
-    public List<Person> retrieveComposite(String groupingPath, String ownerUsername, Integer page, Integer size,
-            String sortString, Boolean isAscending) {
-        logger.info(
-                "getPaginatedGrouping; grouping: " + groupingPath + "; username: " + ownerUsername + "; page: " + page
-                        + "; size: " + size + "; sortString: " + sortString + "; isAscending: " + isAscending + ";");
-        return getPaginatedGrouping(groupingPath, ownerUsername, page, size, sortString, isAscending).getComposite().getMembers();
-    }
-    @Override
-    public List<Person> retrieveBasis(String groupingPath, String ownerUsername, Integer page, Integer size,
-            String sortString, Boolean isAscending) {
-        logger.info(
-                "getPaginatedGrouping; grouping: " + groupingPath + "; username: " + ownerUsername + "; page: " + page
-                        + "; size: " + size + "; sortString: " + sortString + "; isAscending: " + isAscending + ";");
-        return getPaginatedGrouping(groupingPath, ownerUsername, page, size, sortString, isAscending).getBasis().getMembers();
-    }
-    @Override
-    public List<Person> retrieveInclude(String groupingPath, String ownerUsername, Integer page, Integer size,
-            String sortString, Boolean isAscending) {
-        logger.info(
-                "getPaginatedGrouping; grouping: " + groupingPath + "; username: " + ownerUsername + "; page: " + page
-                        + "; size: " + size + "; sortString: " + sortString + "; isAscending: " + isAscending + ";");
-        return getPaginatedGrouping(groupingPath, ownerUsername, page, size, sortString, isAscending).getInclude().getMembers();
-    }
-    @Override
-    public List<Person> retrieveExclude(String groupingPath, String ownerUsername, Integer page, Integer size,
-            String sortString, Boolean isAscending) {
-        logger.info(
-                "getPaginatedGrouping; grouping: " + groupingPath + "; username: " + ownerUsername + "; page: " + page
-                        + "; size: " + size + "; sortString: " + sortString + "; isAscending: " + isAscending + ";");
-        return getPaginatedGrouping(groupingPath, ownerUsername, page, size, sortString, isAscending).getExclude().getMembers();
-    }
-    
+
     public Set<Person> getCommonElements(List<Person> basis, List<Person> include) {
         Set<Person> hashSet = new HashSet<>(basis);
         Set<Person> returnArr = new HashSet<>();
@@ -318,19 +292,20 @@ public class GroupingAssignmentServiceImpl implements GroupingAssignmentService 
                 includePerson.setIsBasis("Yes");
             }
         }
-        for (Person includePerson : personsInExclude) {
-            includePerson.setIsBasis("No");
-            if (personsInBasis.contains(includePerson)) {
-                includePerson.setIsBasis("Yes");
+        for (Person excludePerson : personsInExclude) {
+            excludePerson.setIsBasis("No");
+            if (personsInBasis.contains(excludePerson)) {
+                excludePerson.setIsBasis("Yes");
             }
         }
     }
+
     public void assignMemberToGroup(Grouping compositeGrouping) {
         List<Person> personsInBasis = compositeGrouping.getBasis().getMembers();
         List<Person> personsInInclude = compositeGrouping.getInclude().getMembers();
         List<Person> composites = compositeGrouping.getComposite().getMembers();
         Set<Person> basisAndIncludes = getCommonElements(personsInBasis, personsInInclude);
-        
+
         for (Person person : composites) {
             person.setWhereListed("Basis");
             for (Person includePerson : personsInInclude) {
