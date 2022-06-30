@@ -1,27 +1,20 @@
 package edu.hawaii.its.api.type;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class Person implements Comparable<Person> {
 
-<<<<<<< HEAD
     private static String COMPOSITE_NAME = "cn";
-=======
-    @Transient
     private static String COMMON_NAME = "cn";
-    @Transient
->>>>>>> f6f8876a (Implement assignMemberToGroup fnc)
     private static String FIRST_NAME = "givenName";
     private static String LAST_NAME = "sn";
     private static String UHUUID = "uhUuid";
     private static String USERNAME = "uid";
-    @Transient
     private static String WHERE_LISTED = "listed";
-    @Transient
     private static String IN_BASIS = "inBasis";
 
     private Map<String, String> attributes = new HashMap<>();
@@ -72,12 +65,6 @@ public class Person implements Comparable<Person> {
     public Person(Map<String, String> attributes) {
         this.attributes = attributes;
     }
-<<<<<<< HEAD
-
-=======
-    @Id
-    @Column
->>>>>>> f6f8876a (Implement assignMemberToGroup fnc)
     public String getUsername() {
         return attributes.get(USERNAME);
     }
@@ -118,8 +105,6 @@ public class Person implements Comparable<Person> {
         attributes.put(LAST_NAME, lastName);
     }
 
-    @Column(name = "WhereListed")
-
     public String getWhereListed() {
         return attributes.get(WHERE_LISTED);
     }
@@ -128,7 +113,6 @@ public class Person implements Comparable<Person> {
         attributes.put(WHERE_LISTED, whereListed);
     }
 
-    @Column(name = "InBasis")
     public String getIsBasis() {
         return attributes.get(IN_BASIS);
     }
